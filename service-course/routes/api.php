@@ -50,4 +50,8 @@ Route::delete('image_course/{id}', 'API\ImageCourseController@destroy');
 Route::get('my_course', 'API\MyCourseController@index');
 Route::post('my_course', 'API\MyCourseController@create');
 
+// Review
+Route::post('review', 'API\ReviewController@create');
+Route::put('review/{id}', 'API\ReviewController@update');
+Route::delete('review/{id}', 'API\ReviewController@destroy');
 

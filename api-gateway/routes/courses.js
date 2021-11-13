@@ -1,10 +1,10 @@
-var express = require("express");
-var router = express.Router();
-const { APP_NAME } = process.env;
+const express = require("express");
+const router = express.Router();
+const mentorHandler = require("./handler/courses/mentor");
 
-/* GET users listing. */
-router.get("/", function(req, res, next) {
-    res.send("courses service end point");
-});
+/* Mentor route listing. */
+router.get("/", mentorHandler.read);
+router.get("/:id", mentorHandler.show);
+router.post("/", mentorHandler.create);
 
 module.exports = router;

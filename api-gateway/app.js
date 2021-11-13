@@ -5,12 +5,12 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const coursesRouter = require("./routes/courses");
 const mediaRouter = require("./routes/media");
+const usersRouter = require("./routes/users");
+const refreshTokensRouter = require("./routes/refreshTokens");
+const coursesMentorRouter = require("./routes/courses");
 const ordersRouter = require("./routes/orders");
 const paymentsRouter = require("./routes/payments");
-const refreshTokensRouter = require("./routes/refreshTokens");
 
 const verifyToken = require("./middleware/verifyToken");
 
@@ -23,11 +23,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/media", mediaRouter);
-app.use("/courses", verifyToken, coursesRouter);
-app.use("/orders", verifyToken, ordersRouter);
-app.use("/payments", paymentsRouter);
+app.use("/users", usersRouter);
 app.use("/refresh_tokens", refreshTokensRouter);
+app.use("/courses/mentor", coursesMentorRouter);
 
 module.exports = app;

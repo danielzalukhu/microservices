@@ -8,7 +8,7 @@ const indexRouter = require("./routes/index");
 const mediaRouter = require("./routes/media");
 const usersRouter = require("./routes/users");
 const refreshTokensRouter = require("./routes/refreshTokens");
-const coursesMentorRouter = require("./routes/courses");
+const coursesRouter = require("./routes/courses");
 const ordersRouter = require("./routes/orders");
 const paymentsRouter = require("./routes/payments");
 
@@ -26,6 +26,6 @@ app.use("/", indexRouter);
 app.use("/media", mediaRouter);
 app.use("/users", usersRouter);
 app.use("/refresh_tokens", refreshTokensRouter);
-app.use("/courses/mentor", coursesMentorRouter);
+app.use("/courses", coursesRouter);
 
 module.exports = app;

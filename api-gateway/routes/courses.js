@@ -5,6 +5,9 @@ const mentorHandler = require("./handler/courses/mentor");
 const courseHandler = require("./handler/courses/course");
 const chapterHandler = require("./handler/courses/chapter");
 const lessonHandler = require("./handler/courses/lesson");
+const imageCourseHandler = require("./handler/courses/image_course");
+const myCourseHandler = require("./handler/courses/my_course");
+const reviewHandler = require("./handler/courses/review");
 
 /* Mentor route listing. */
 router.get("/mentor/", verifyToken, mentorHandler.read);
@@ -33,5 +36,18 @@ router.post("/lesson", verifyToken, lessonHandler.create);
 router.get("/lesson/:id", verifyToken, lessonHandler.show);
 router.put("/lesson/:id", verifyToken, lessonHandler.update);
 router.delete("/lesson/:id", verifyToken, lessonHandler.destroy);
+
+/* ImageCourse route listing. */
+router.post("/image_course", verifyToken, imageCourseHandler.create);
+router.delete("/image_course/:id", verifyToken, imageCourseHandler.destroy);
+
+/* MyCourse route listing. */
+router.get("/my_course", verifyToken, myCourseHandler.get);
+router.post("/my_course", verifyToken, myCourseHandler.create);
+
+/** Review route listing */
+router.post("/review", verifyToken, reviewHandler.create);
+router.put("/review/:id", verifyToken, reviewHandler.update);
+router.delete("/review/:id", verifyToken, reviewHandler.destroy);
 
 module.exports = router;

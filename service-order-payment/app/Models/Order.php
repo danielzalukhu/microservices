@@ -16,11 +16,18 @@ class Order extends Model
     
     protected $fillable = [
         'status',
-        'user_id',
-        'course_id',
+        'total_price',
+        'user_id',    
+        'user_name',
+        'user_email',
         'snap_url',
         'metadata'
     ];
+
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 
     public function paymentlog()
     {

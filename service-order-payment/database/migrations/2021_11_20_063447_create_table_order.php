@@ -16,8 +16,10 @@ class CreateTableOrder extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('status')->default('pending');
-            $table->integer('user_id');
-            $table->integer('course_id');
+            $table->integer('total_price');
+            $table->integer('user_id');            
+            $table->string('user_name')->nullable();            
+            $table->string('user_email')->nullable();            
             $table->string('snap_url')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();

@@ -9,15 +9,22 @@ module.exports = async(req, res) => {
          * Kita perlu ambil ID user yang login dalam token yang diinject dari middleware ketika login
          * (lihat di folder middleware verifyToken) --> req.user
          */
+
         const user_id = req.user.data.id;
-        const course_id = req.body.course_id;
+
+        const request = req.body;
+        const postData = [];
+
+        request.forEach((obj) => {
+            postData.push({
+                course_id: obj["course_id"],
+                user_id: user_id,
+            });
+        });
 
         // panggil api (endpoin) dari service course yang dibutuhkan
         // kalau handler get panggil route get dsb
-        const my_course = await api.post("api/my_course", {
-            user_id,
-            course_id,
-        });
+        const my_course = await api.post("api/my_course", postData);
 
         return res.json(my_course.data);
     } catch (error) {

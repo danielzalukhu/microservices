@@ -29,56 +29,98 @@ class MyCourseController extends Controller
 
     public function create(Request $request)
     {
-        $data = $request->all();
+        $data = $request->all();        
 
         $formRequest = new MyCourseRequest();
 
-        $validate = Validator::make($data, $formRequest::rules());
+        foreach($data as $key => $value) {                
+            $validate = Validator::make($value, $formRequest::rules());
+            if ($validate->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validate->errors()
+                ], 400);
+            }
 
-        if ($validate->fails()) {
+            $course = Course::find($value['course_id']);
+            if(!$course) {
+                return response()->json([
+                    'stattus' => 'error',
+                    'message' => 'course not found'
+                ], 404);
+            }
+
+            // Panggil function dari helpers
+            $user = getUser($value['user_id']);
+            if ($user['status'] === 'error') {
+                return response()->json([
+                    'status' => $user['status'],
+                    'message' => $user['message'],
+                ], $user['http_code']);
+            }
+
+            // Cek duplicate data
+            $isExistsMyCourse = MyCourse::where('course_id', '=', $value['course_id'])
+                                        ->where('user_id', '=', $value['user_id'])
+                                        ->exists();
+
+            if ($isExistsMyCourse) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'user already taken this course'
+                ], 409);
+            }
+
+            if ($course->type === 'premium') {
+
+                if ($course->price ===0) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $course->name . ' course price can not be null (0)'
+                    ], 405);
+                }
+
+                $post_course[] = $course->toArray();                                    
+
+            } else {
+                $my_course[] = MyCourse::create($value);                     
+            }
+        }    
+
+        /** Handle if class request is not premium */
+        if ($course->type !== 'premium') {
             return response()->json([
-                'status' => 'error',
-                'message' => $validate->errors()
-            ], 400);
+                'status' => 'success',
+                'data' => $my_course
+            ]);
+        }            
+
+        /** Handle create premium class */
+        $order = postOrder([
+            'user' => $user['data'],
+            'course' => $post_course
+        ]);                    
+
+        if ($order['status'] === 'error') {
+            return response()->json([
+                'status' => $order['status'],
+                'message' => $order['message']
+            ], $order['http_code']);
         }
 
-        $course_id = $request->input('course_id');
+        return response()->json([
+            'status' => $order['status'],
+            'data' => $order['data']
+        ]);       
+    }
 
-        $course = Course::find($course_id);
+    public function giveAccessPremiumClass(Request $request) 
+    {
+        $data = $request->all();
 
-        if(!$course) {
-            return response()->json([
-                'stattus' => 'error',
-                'message' => 'course not found'
-            ], 404);
+        foreach($data as $item) {
+            $my_course = MyCourse::create($item);
         }
-
-        $user_id = $request->input('user_id');
-
-        // Panggil function dari helpers
-        $user = getUser($user_id);
-
-        if ($user['status'] === 'error') {
-            return response()->json([
-                'status' => $user['status'],
-                'message' => $user['message'],
-            ], $user['http_code']);
-        }
-
-        // Cek duplicate data
-
-        $isExistsMyCourse = MyCourse::where('course_id', '=', $course_id)
-                                    ->where('user_id', '=', $user_id)
-                                    ->exists();
-
-        if ($isExistsMyCourse) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'user already taken this course'
-            ], 409);
-        }
-
-        $my_course = MyCourse::create($data);
 
         return response()->json([
             'status' => 'success',

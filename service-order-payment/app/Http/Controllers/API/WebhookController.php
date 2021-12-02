@@ -94,12 +94,23 @@ class WebhookController extends Controller
 
         PaymentLog::create($logs);
 
+        $get_order_detail = $order->details->toArray();
+        $params = [];
+
+        foreach($get_order_detail as $details) {            
+            array_push($params, [
+                'user_id' => $order->user_id,
+                'course_id' => $details['course_id'],
+            ]);
+        }
+
         /** Update status order di table order id */
         $order->save();
-
+                
         /** Give user access premiun to class if their payment is success */
         if ($order->status === 'success') {
-            /** Kirim aksesnya ke service course */
+            /** Kirim aksesnya ke service course */            
+            giveAccessPremiumClass($params);
         }
 
         return response()->json('ok');

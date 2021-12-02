@@ -49,6 +49,7 @@ Route::delete('image_course/{id}', 'API\ImageCourseController@destroy');
 // My Course
 Route::get('my_course', 'API\MyCourseController@index');
 Route::post('my_course', 'API\MyCourseController@create');
+Route::post('my_course/premium', 'API\MyCourseController@giveAccessPremiumClass');
 
 // Review
 Route::post('review', 'API\ReviewController@create');
